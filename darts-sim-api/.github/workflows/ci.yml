@@ -1,0 +1,27 @@
+name: Spring Boot CI
+
+# mainブランチにPush、またはPull Requestが作成された時に起動
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven # Gradleの場合は 'gradle' に変更
+
+    - name: Build and Test with Maven
+      run: mvn -B package --file pom.xml
+      # Gradleの場合は run: ./gradlew build

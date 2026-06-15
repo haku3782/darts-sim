@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Scene3D from "./components/3d/Scene3D";
 import type { GameRule, FlightShape } from "./types/simulation";
 import { COLORS, BOARD_X_MAP } from "./constants";
+import { BREAKPOINTS } from "./constants/breakpoints";
 import { useTheme } from "./hooks/useTheme";
 import { useSimulation } from "./hooks/useSimulation";
 import { useLanguage } from "./hooks/useLanguage";
@@ -60,7 +61,7 @@ export default function App() {
   // ── Hooks ────────────────────────────────────────────────────────
   const { isDark, setIsDark, C } = useTheme();
   const { lang, changeLang, t, langList } = useLanguage();
-  const isMobile = useWindowWidth() < 768;
+  const isMobile = useWindowWidth() < BREAKPOINTS.MD;
   const {
     history, isLoading, isDeleting,
     fetchHistory,

@@ -130,7 +130,7 @@ export default function App() {
     <div className="app-root" style={{ background: C.pageBg, color: C.text }}>
 
       {/* ヘッダー */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "flex-start" : "center", justifyContent: "space-between", gap: isMobile ? "8px" : undefined, marginBottom: "16px" }}>
         <h2 style={{ color: C.textTitle, textShadow: isDark ? "0 0 20px rgba(160, 180, 220, 0.5)" : "none", letterSpacing: "0.1em", fontWeight: "600", margin: 0 }}>
           {t('appTitle')}
         </h2>

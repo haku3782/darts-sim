@@ -134,7 +134,7 @@ export default function App() {
         <h2 style={{ color: C.textTitle, textShadow: isDark ? "0 0 20px rgba(160, 180, 220, 0.5)" : "none", letterSpacing: "0.1em", fontWeight: "600", margin: 0 }}>
           {t('appTitle')}
         </h2>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", alignSelf: isMobile ? "flex-end" : undefined }}>
           <LanguageSelector lang={lang} langList={langList} onChange={changeLang} C={C} />
           <ThemeToggle isDark={isDark} onToggle={() => setIsDark(v => !v)} C={C} />
         </div>

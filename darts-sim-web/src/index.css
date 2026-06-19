@@ -322,7 +322,6 @@ code {
   .app-layout { flex-direction: column; }
   .param-panel {
     width: 100%;
-    max-width: 480px;
     position: static;
     top: 0;
   }

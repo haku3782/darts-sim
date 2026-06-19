@@ -3,6 +3,8 @@ import type { GameRule, FlightShape } from "../../types/simulation";
 import type { ThemeColors } from "../../hooks/useTheme";
 import type { TFunc } from "../../i18n/translations";
 import NumInput from "./NumInput";
+import { useWindowWidth } from "../../hooks/useWindowWidth";
+import { BREAKPOINTS } from "../../constants/breakpoints";
 
 interface ParamPanelProps {
   gameRule: GameRule; setGameRule: (r: GameRule) => void;
@@ -45,6 +47,8 @@ export default function ParamPanel({
   isDark, C, t,
 }: ParamPanelProps) {
 
+  const isMobile = useWindowWidth() < BREAKPOINTS.MD;
+
   const sectionHeader: React.CSSProperties = {
     margin: "0 0 8px", paddingBottom: "4px",
     borderBottom: `1px solid ${C.sectionBorder}`,
@@ -52,7 +56,10 @@ export default function ParamPanel({
     color: C.textAccent, letterSpacing: "0.08em",
     textTransform: "uppercase",
   };
-  const fieldGrid: React.CSSProperties = { display: "flex", flexDirection: "column", gap: "8px" };
+  const fieldGrid: React.CSSProperties = isMobile
+    ? { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }
+    : { display: "flex", flexDirection: "column", gap: "8px" };
+  const fieldGridSingle: React.CSSProperties = { display: "flex", flexDirection: "column", gap: "8px" };
   const labelFontSize = t('labelFontSize');
   const field = (label: string, el: React.ReactNode): React.ReactNode => (
     <label key={label} className="param-field" style={{ fontSize: "14px" }}>
@@ -72,7 +79,7 @@ export default function ParamPanel({
       {/* ── ルール ── */}
       <div>
         <p style={sectionHeader}>{t('rule')}</p>
-        <div style={fieldGrid}>
+        <div style={fieldGridSingle}>
           <select value={gameRule} onChange={e => { setGameRule(e.target.value as GameRule); onGameRuleChange?.(); }} style={{ width: "100%", boxSizing: "border-box" }}>
             <option value="SOFT">{t('ruleSOFT')}</option>
             <option value="HARD">{t('ruleHARD')}</option>

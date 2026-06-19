@@ -15,7 +15,7 @@
 - **セッティングシミュレーター:** バレル、シャフト、フライトの様々な組み合わせをインタラクティブにテストできます。
 - **物理演算エンジン:** バレルの重量、シャフトの長さ、フライトの空気抵抗などのパラメータに基づいてダーツの飛行軌道を計算します。
 - **コンテナ化アーキテクチャ:** マルチステージビルドによる完全なDocker化で、ローカルから本番環境まで一貫した実行環境を保証します。
-- **自動化されたCI/CD:** GitHub Actionsによるフロントエンド・バックエンド両方の自動テスト・デプロイパイプライン。
+- **自動化されたCI/CD:** GitHub Actionsによるフロントエンド・バックエンド両方の自動テストパイプライン。
 
 ---
 
@@ -25,8 +25,9 @@
 
 | | |
 |---|---|
-| フレームワーク | React 18 (TypeScript) |
+| フレームワーク | React 19 (TypeScript) |
 | ビルドツール | Vite |
+| 3D描画 | Three.js / React Three Fiber |
 | ホスティング | Vercel |
 
 ### バックエンド (`darts-sim-api`)
@@ -34,7 +35,7 @@
 | | |
 |---|---|
 | 言語 | Java 21 |
-| フレームワーク | Spring Boot 3 |
+| フレームワーク | Spring Boot 4 |
 | ビルドツール | Maven |
 | コンテナ化 | Docker |
 | ホスティング | Render |
@@ -67,60 +68,12 @@ graph TD
 
     Dev -->|"1. コードをPush"| Repo
     Repo -->|"2. トリガー"| Actions
-    Actions -->|"3. テスト合格でデプロイ"| Spring
-    Repo -->|"自動検知してデプロイ"| React
+    Repo -->|"3. 自動デプロイ"| React
+    Repo -->|"4. 自動デプロイ"| Spring
 
     User -->|"A. サイトにアクセス"| React
     React -->|"B. REST API (JSON)<br/>物理演算をリクエスト"| Spring
     Spring -.->|"C. 計算結果を返す"| React
-```
-
----
-
-## 🚀 ローカル環境の構築手順
-
-### 前提条件
-
-- **Node.js** v18以上
-- **Java 21 (JDK)**
-- **Maven** (任意 — Maven Wrapperが同梱されています)
-- **Docker** (任意 — バックエンドをコンテナで実行する場合)
-
-### リポジトリのクローン
-
-```bash
-git clone https://github.com/haku3782/darts-sim.git
-cd darts-sim
-```
-
-### フロントエンド
-
-```bash
-cd darts-sim-web
-npm install
-npm run dev
-```
-
-ブラウザで `http://localhost:5173` を開きます。
-
-> ローカルでAPIデータを取得するには、バックエンドが `http://localhost:8080` で起動していることを確認してください。
-
-### バックエンド
-
-```bash
-cd darts-sim-api
-./mvnw spring-boot:run
-# Windowsの場合: mvnw.cmd spring-boot:run
-```
-
-APIサーバーが `http://localhost:8080` で起動します。
-
-#### Dockerでの実行
-
-```bash
-cd darts-sim-api
-docker build -t darts-sim-api .
-docker run -p 8080:8080 darts-sim-api
 ```
 
 ---
@@ -132,4 +85,4 @@ docker run -p 8080:8080 darts-sim-api
 | フロントエンド | Vercel | `main` ブランチへのPushで自動デプロイ |
 | バックエンド | Render (Docker) | `main` ブランチへのPushで自動デプロイ |
 
-統合されたGitHub Actionsワークフロー（`.github/workflows/ci.yml`）により、pushのたびにフロントエンドのビルド/テストとバックエンドのユニットテストが両方実行されます。
+統合されたGitHub Actionsワークフロー（`.github/workflows/ci.yml`）により、pushのたびにフロントエンドのビルド/テストとバックエンドのユニットテストが実行されます。VercelとRenderはそれぞれリポジトリを独立して監視し、`main` ブランチが更新されると自動的にデプロイします。

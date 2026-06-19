@@ -15,7 +15,7 @@ An interactive 3D darts physics simulation and setting optimization web applicat
 - **Setting Simulator:** Interactive configuration to test different combinations of barrels, shafts, and flights.
 - **Physics Engine:** Calculates dart flight paths based on parameters such as barrel weight, shaft length, and flight drag.
 - **Containerized Architecture:** Fully Dockerized backend using multi-stage builds for consistent environments from local to production.
-- **Automated CI/CD:** GitHub Actions pipeline for automated testing and deployment of both frontend and backend.
+- **Automated CI/CD:** GitHub Actions pipeline for automated testing of both frontend and backend.
 
 ---
 
@@ -25,8 +25,9 @@ An interactive 3D darts physics simulation and setting optimization web applicat
 
 | | |
 |---|---|
-| Framework | React 18 (TypeScript) |
+| Framework | React 19 (TypeScript) |
 | Build Tool | Vite |
+| 3D Rendering | Three.js / React Three Fiber |
 | Hosting | Vercel |
 
 ### Backend (`darts-sim-api`)
@@ -34,7 +35,7 @@ An interactive 3D darts physics simulation and setting optimization web applicat
 | | |
 |---|---|
 | Language | Java 21 |
-| Framework | Spring Boot 3 |
+| Framework | Spring Boot 4 |
 | Build Tool | Maven |
 | Containerization | Docker |
 | Hosting | Render |
@@ -65,60 +66,12 @@ graph TD
 
     Dev -->|"1. Push Code"| Repo
     Repo -->|"2. Trigger"| Actions
-    Actions -->|"3. Deploy if Test Passes"| Spring
-    Repo -->|"Auto Deploy"| React
+    Repo -->|"3. Auto Deploy"| React
+    Repo -->|"4. Auto Deploy"| Spring
 
     User -->|"A. Access Site"| React
     React -->|"B. REST API (JSON)<br/>Request Physics Calc"| Spring
     Spring -.->|"C. Return Computation"| React
-```
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Node.js** v18 or higher
-- **Java 21 (JDK)**
-- **Maven** (optional — Maven Wrapper is included)
-- **Docker** (optional — for containerized backend)
-
-### Clone the repository
-
-```bash
-git clone https://github.com/haku3782/darts-sim.git
-cd darts-sim
-```
-
-### Frontend
-
-```bash
-cd darts-sim-web
-npm install
-npm run dev
-```
-
-Open `http://localhost:5173` in your browser.
-
-> To fetch live data locally, ensure the backend is running on `http://localhost:8080`.
-
-### Backend
-
-```bash
-cd darts-sim-api
-./mvnw spring-boot:run
-# On Windows: mvnw.cmd spring-boot:run
-```
-
-The API starts on `http://localhost:8080`.
-
-#### Running with Docker
-
-```bash
-cd darts-sim-api
-docker build -t darts-sim-api .
-docker run -p 8080:8080 darts-sim-api
 ```
 
 ---
@@ -130,4 +83,4 @@ docker run -p 8080:8080 darts-sim-api
 | Frontend | Vercel | Auto-deploy on push to `main` |
 | Backend | Render (Docker) | Auto-deploy on push to `main` |
 
-Both are validated by a unified GitHub Actions workflow (`.github/workflows/ci.yml`) that runs frontend build/test and backend unit tests on every push.
+A unified GitHub Actions workflow (`.github/workflows/ci.yml`) runs frontend build/test and backend unit tests on every push. Vercel and Render each watch the repository independently and deploy automatically when the `main` branch is updated.

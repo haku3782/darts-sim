@@ -64,6 +64,8 @@
 body {
   margin: 0;
   background: #0f0f1a;
+  overflow-x: hidden;
+  min-width: 320px;
 }
 
 input[type="range"] {
@@ -324,6 +326,8 @@ code {
     width: 100%;
     position: static;
     top: 0;
+    gap: 16px;
+    box-sizing: border-box;
   }
   .scene-canvas { height: 380px; }
 }
@@ -339,8 +343,8 @@ code {
 .param-field-label { width: 125px; flex-shrink: 0; }
 .param-field-input { flex: 1; min-width: 0; }
 
-@media (max-width: 479px) {
-  .param-field       { flex-direction: column; align-items: stretch; gap: 4px; }
+@media (max-width: 767px) { /* MD - 1 */
+  .param-field       { flex-direction: column; align-items: stretch; gap: 4px; min-width: 0; }
   .param-field-label { width: auto; }
   .param-field-input { width: 100%; }
 }

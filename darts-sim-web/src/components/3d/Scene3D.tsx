@@ -7,6 +7,8 @@ import Floor from "./Floor";
 import ThrowLine from "./ThrowLine";
 import Dartboard from "./Dartboard";
 import DartTrajectory from "./DartTrajectory";
+import { useWindowWidth } from "../../hooks/useWindowWidth";
+import { BREAKPOINTS } from "../../constants/breakpoints";
 
 interface TrajectoryPoint {
   time: number;
@@ -103,6 +105,7 @@ function PanController({
 }
 
 export default function Scene3D({ trajectories, releaseDistance, releaseHeight, gameRule, cameraZ, cameraY, flightShape, barrelLength, shaftLength, initialPitch, cgRatio, gripRatio, releaseColor, playbackSpeed, isPlaying, restartKey, canvasBg = "#1a1a2e", surfaceColor = "#373737", isDark = true, onHorizontalScroll, onVerticalScroll }: Scene3DProps) {
+  const isMobile = useWindowWidth() < BREAKPOINTS.MD;
   const boardX = BOARD_X[gameRule];
   const throwLineX = THROW_LINE_X[gameRule];
   const orbitRef = useRef<any>(null);
@@ -199,7 +202,7 @@ export default function Scene3D({ trajectories, releaseDistance, releaseHeight, 
       {/* 平行移動コントローラー */}
       <PanController xOffset={cameraZ} yOffset={cameraY} orbitRef={orbitRef} />
       {/* カメラコントロール */}
-      <OrbitControls ref={orbitRef} target={target} enableDamping={false} zoomSpeed={0.5} enablePan={false} />
+      <OrbitControls ref={orbitRef} target={target} enableDamping={false} zoomSpeed={0.5} enablePan={false} rotateSpeed={isMobile ? 0.4 : 1.0} />
 
       {/* シーン */}
       <Floor centerX={initialCenterX.current} color={surfaceColor} basic={false}

@@ -198,6 +198,7 @@ export default function App() {
                 onVerticalScroll={(dy) => {
                   setCameraY(prev => Math.max(-2.0, Math.min(2.0, prev + dy * 0.003)));
                 }}
+                onResetCamera={() => { setCameraZ(0); setCameraY(0); }}
               />
 
               {/* 縦スライダー（視点高さ）- デスクトップのみ */}
@@ -217,7 +218,7 @@ export default function App() {
 
               {/* 横スライダー（視点左右）- デスクトップのみ */}
               {!isMobile && (
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 56, height: "56px", padding: "0 16px", boxSizing: "border-box", display: "flex", flexDirection: "column", justifyContent: "center", gap: "6px" }}>
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 40, height: "56px", padding: "0 16px", boxSizing: "border-box", display: "flex", flexDirection: "column", justifyContent: "center", gap: "6px" }}>
                   <label style={{ display: "flex", alignItems: "center", gap: "12px", color: C.canvasText, fontSize: "13px" }}>
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: "48px", flexShrink: 0 }}>
                       <span style={{ whiteSpace: "nowrap" }}>{t('cameraLR')}</span>

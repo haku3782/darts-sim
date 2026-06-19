@@ -1,7 +1,7 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import { createFlightShape, FLIGHT_HALF_HEIGHT, type FlightShapeType } from "./flightShapeGeometry";
 import Floor from "./Floor";
 import ThrowLine from "./ThrowLine";
@@ -55,6 +55,7 @@ interface Scene3DProps {
   isDark?: boolean;             // ダークモードフラグ（床・壁のマテリアル切替に使用）
   onHorizontalScroll?: (deltaX: number) => void; // 二本指左右スクロール
   onVerticalScroll?: (deltaY: number) => void;   // 二本指上下スクロール
+  onResetCamera?: () => void;                    // カメラリセット
 }
 
 // ルールごとのボード固定距離（スローラインからボードまでの公式距離）
@@ -78,14 +79,22 @@ function PanController({
   xOffset,
   yOffset,
   orbitRef,
+  resetKey,
 }: {
   xOffset: number;
   yOffset: number;
   orbitRef: React.RefObject<any>;
+  resetKey: number;
 }) {
   const { camera } = useThree();
   const prevXOffset = useRef(0);
   const prevYOffset = useRef(0);
+
+  // resetKey変化時にオフセット参照をクリア（PanControllerの誤差移動を防ぐ）
+  useEffect(() => {
+    prevXOffset.current = 0;
+    prevYOffset.current = 0;
+  }, [resetKey]);
 
   useEffect(() => {
     const dx = xOffset - prevXOffset.current;
@@ -104,11 +113,39 @@ function PanController({
   return null;
 }
 
-export default function Scene3D({ trajectories, releaseDistance, releaseHeight, gameRule, cameraZ, cameraY, flightShape, barrelLength, shaftLength, initialPitch, cgRatio, gripRatio, releaseColor, playbackSpeed, isPlaying, restartKey, canvasBg = "#1a1a2e", surfaceColor = "#373737", isDark = true, onHorizontalScroll, onVerticalScroll }: Scene3DProps) {
+// カメラを初期位置・回転に正確に戻すコントローラー
+function CameraResetController({
+  resetKey,
+  initialPos,
+  initialTarget,
+  orbitRef,
+}: {
+  resetKey: number;
+  initialPos: [number, number, number];
+  initialTarget: [number, number, number];
+  orbitRef: React.RefObject<any>;
+}) {
+  const { camera } = useThree();
+  const isFirst = useRef(true);
+
+  useEffect(() => {
+    if (isFirst.current) { isFirst.current = false; return; }
+    camera.position.set(...initialPos);
+    if (orbitRef.current) {
+      orbitRef.current.target.set(...initialTarget);
+      orbitRef.current.update();
+    }
+  }, [resetKey]);
+
+  return null;
+}
+
+export default function Scene3D({ trajectories, releaseDistance, releaseHeight, gameRule, cameraZ, cameraY, flightShape, barrelLength, shaftLength, initialPitch, cgRatio, gripRatio, releaseColor, playbackSpeed, isPlaying, restartKey, canvasBg = "#1a1a2e", surfaceColor = "#373737", isDark = true, onHorizontalScroll, onVerticalScroll, onResetCamera }: Scene3DProps) {
   const isMobile = useWindowWidth() < BREAKPOINTS.MD;
   const boardX = BOARD_X[gameRule];
   const throwLineX = THROW_LINE_X[gameRule];
   const orbitRef = useRef<any>(null);
+  const [cameraResetKey, setCameraResetKey] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchMidRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -188,8 +225,30 @@ export default function Scene3D({ trajectories, releaseDistance, releaseHeight, 
   const flightGeo = useMemo(() => createFlightShape(flightShape), [flightShape]);
   const target: [number, number, number] = [initialCenterX.current, 1.73, 0];
 
+  const initialPos: [number, number, number] = [initialCenterX.current, 1.7, 3];
+  const initialTarget: [number, number, number] = [initialCenterX.current, 1.73, 0];
+
+  const handleReset = () => {
+    setCameraResetKey(k => k + 1);
+    onResetCamera?.();
+  };
+
   return (
     <div ref={containerRef} className="scene-canvas">
+      <button
+        onClick={handleReset}
+        title="カメラリセット"
+        style={{
+          position: "absolute", bottom: "8px", right: "8px", zIndex: 10,
+          width: "32px", height: "32px", borderRadius: "6px",
+          background: isDark ? "rgba(30,40,70,0.75)" : "rgba(255,255,255,0.75)",
+          color: isDark ? "#aaddff" : "#1a4a8a",
+          border: `1px solid ${isDark ? "#3a6a9a" : "#90b8d8"}`,
+          fontSize: "18px", cursor: "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          backdropFilter: "blur(4px)",
+        }}
+      >↺</button>
     <Canvas
       camera={{ position: [centerX, 1.7, 3], fov: 50 }}
       style={{ width: "100%", height: "100%", background: canvasBg }}
@@ -200,7 +259,8 @@ export default function Scene3D({ trajectories, releaseDistance, releaseHeight, 
       <directionalLight position={[-5, 3, -5]} intensity={0.8} />
 
       {/* 平行移動コントローラー */}
-      <PanController xOffset={cameraZ} yOffset={cameraY} orbitRef={orbitRef} />
+      <PanController xOffset={cameraZ} yOffset={cameraY} orbitRef={orbitRef} resetKey={cameraResetKey} />
+      <CameraResetController resetKey={cameraResetKey} initialPos={initialPos} initialTarget={initialTarget} orbitRef={orbitRef} />
       {/* カメラコントロール */}
       <OrbitControls ref={orbitRef} target={target} enableDamping={false} zoomSpeed={0.5} enablePan={false} rotateSpeed={isMobile ? 0.4 : 1.0} />
 

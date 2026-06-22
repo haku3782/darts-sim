@@ -4,7 +4,7 @@
 
 インタラクティブな3Dダーツ物理シミュレーションと、セッティング最適化のためのWebアプリケーションです。3D描画を担当するReact/TypeScriptフロントエンドと、物理演算を担当するSpring Boot/Javaバックエンドを分離した、疎結合なクラウドネイティブアーキテクチャを採用しています。
 
-🚀 **<a href="https://darts-sim-web.vercel.app/" target="_blank" rel="noopener noreferrer">ライブデモ</a>**
+🚀 **[ライブデモ](https://darts-sim-web.vercel.app/)**
 🔗 **APIエンドポイント:** `https://darts-sim-api.onrender.com/api`
 
 ---

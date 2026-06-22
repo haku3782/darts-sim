@@ -4,7 +4,7 @@
 
 An interactive 3D darts physics simulation and setting optimization web application. Built with a decoupled cloud-native architecture — a React/TypeScript frontend for 3D rendering and a Spring Boot/Java backend for physics computation.
 
-🚀 **[Live Demo](https://darts-sim-web.vercel.app/)**
+🚀 **<a href="https://darts-sim-web.vercel.app/" target="_blank" rel="noopener noreferrer">Live Demo</a>**
 🔗 **API Endpoint:** `https://darts-sim-api.onrender.com/api`
 
 ---
@@ -16,6 +16,7 @@ An interactive 3D darts physics simulation and setting optimization web applicat
 - **Physics Engine:** Calculates dart flight paths based on parameters such as barrel weight, shaft length, and flight drag.
 - **Containerized Architecture:** Fully Dockerized backend using multi-stage builds for consistent environments from local to production.
 - **Automated CI/CD:** GitHub Actions pipeline for automated testing of both frontend and backend.
+- **Responsive Design:** Layout adapts across desktop, tablet, and mobile screen sizes.
 
 ---
 

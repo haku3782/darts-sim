@@ -56,7 +56,9 @@ graph TD
     subgraph "Backend Hosting (Render)"
         Spring[Spring Boot / Java 21<br/>Physics Engine API]
         Docker((Docker Container))
+        DB[(PostgreSQL)]
         Spring --- Docker
+        Spring --- DB
     end
 
     subgraph "CI/CD & Source Control"
@@ -84,3 +86,5 @@ graph TD
 | Backend | Render (Docker) | Auto-deploy on push to `main` |
 
 A unified GitHub Actions workflow (`.github/workflows/ci.yml`) runs frontend build/test and backend unit tests on every push. Vercel and Render each watch the repository independently and deploy automatically when the `main` branch is updated.
+
+> **Note:** Testing and deployment are currently independent — a deploy is not gated on CI passing.

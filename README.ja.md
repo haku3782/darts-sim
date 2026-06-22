@@ -58,7 +58,9 @@ graph TD
     subgraph "Backend Hosting (Render)"
         Spring[Spring Boot / Java 21<br/>物理演算 API]
         Docker((Docker Container))
+        DB[(PostgreSQL)]
         Spring --- Docker
+        Spring --- DB
     end
 
     subgraph "CI/CD & Source Control"
@@ -86,3 +88,5 @@ graph TD
 | バックエンド | Render (Docker) | `main` ブランチへのPushで自動デプロイ |
 
 統合されたGitHub Actionsワークフロー（`.github/workflows/ci.yml`）により、pushのたびにフロントエンドのビルド/テストとバックエンドのユニットテストが実行されます。VercelとRenderはそれぞれリポジトリを独立して監視し、`main` ブランチが更新されると自動的にデプロイします。
+
+> **注記:** 現状、テストとデプロイは独立して動作しています。CIの合格はデプロイの条件にはなっていません。

@@ -47,7 +47,6 @@ An interactive 3D darts physics simulation and setting optimization web applicat
 
 ```mermaid
 graph TD
-    Dev((Developer))
     User((End User))
 
     subgraph "Frontend Hosting (Vercel)"
@@ -62,19 +61,16 @@ graph TD
         Spring --- DB
     end
 
-    subgraph "CI/CD & Source Control"
-        Repo[(GitHub)]
-        Actions[GitHub Actions<br/>Automated Testing]
+    User -->|"1. Access Site"| React
+    React -->|"2. REST API (JSON)<br/>Request Physics Calc"| Spring
+    Spring -.->|"3. Return Computation"| React
+
+    subgraph "CI/CD (on push to main)"
+        Dev((Developer)) -.->|"git push"| Repo[(GitHub)]
+        Repo -.->|"trigger"| Actions[GitHub Actions<br/>Automated Testing]
+        Repo -.->|"auto-deploy"| React
+        Repo -.->|"auto-deploy"| Spring
     end
-
-    Dev -->|"1. Push Code"| Repo
-    Repo -->|"2. Trigger"| Actions
-    Repo -->|"3. Auto Deploy"| React
-    Repo -->|"4. Auto Deploy"| Spring
-
-    User -->|"A. Access Site"| React
-    React -->|"B. REST API (JSON)<br/>Request Physics Calc"| Spring
-    Spring -.->|"C. Return Computation"| React
 ```
 
 ---

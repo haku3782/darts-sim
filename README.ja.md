@@ -49,7 +49,6 @@ UIの描画処理と、重い物理演算を分離するための疎結合アー
 
 ```mermaid
 graph TD
-    Dev((開発者))
     User((ユーザー))
 
     subgraph "Frontend Hosting (Vercel)"
@@ -64,19 +63,16 @@ graph TD
         Spring --- DB
     end
 
-    subgraph "CI/CD & Source Control"
-        Repo[(GitHub)]
-        Actions[GitHub Actions<br/>自動テスト]
+    User -->|"1. サイトにアクセス"| React
+    React -->|"2. REST API (JSON)<br/>物理演算をリクエスト"| Spring
+    Spring -.->|"3. 計算結果を返す"| React
+
+    subgraph "CI/CD（mainへのPushで実行）"
+        Dev((開発者)) -.->|"git push"| Repo[(GitHub)]
+        Repo -.->|"トリガー"| Actions[GitHub Actions<br/>自動テスト]
+        Repo -.->|"自動デプロイ"| React
+        Repo -.->|"自動デプロイ"| Spring
     end
-
-    Dev -->|"1. コードをPush"| Repo
-    Repo -->|"2. トリガー"| Actions
-    Repo -->|"3. 自動デプロイ"| React
-    Repo -->|"4. 自動デプロイ"| Spring
-
-    User -->|"A. サイトにアクセス"| React
-    React -->|"B. REST API (JSON)<br/>物理演算をリクエスト"| Spring
-    Spring -.->|"C. 計算結果を返す"| React
 ```
 
 ---
